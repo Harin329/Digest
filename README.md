@@ -19,3 +19,12 @@ Welcome to Digest. This is an exploration of the Word2Vec algorithm. The goal of
 5. Use the generated .txt file to train the spaCy model with `python -m spacy init vectors en ./data/directions.txt ./model`
 6. Load the model into main.py and run GET token
 7. Deploy & Enjoy!
+    - Run `zip -r Digest.zip . -x '.??*'` to zip the project
+    - Upload zip to Azure with:
+    ```
+    curl -X POST \               
+    -H 'Content-Type: application/zip' \
+    -u '$DigestAPI' \
+    -T Digest.zip \
+    https://digestapi.scm.azurewebsites.net/api/zipdeploy
+    ```
