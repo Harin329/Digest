@@ -14,7 +14,7 @@ async def health_check():
 
 @app.get("/version")
 async def version_check():
-    return "Version: 2022.3.9.12.51", 200
+    return "Version: 2022.3.10.17.38", 200
 
 @app.post("/")
 async def read_item(textObj: InputItem):
@@ -26,7 +26,7 @@ async def read_item(textObj: InputItem):
     with open('reference/action_vector.npy', 'rb') as actionFile:
         avg_action_vector = np.load(actionFile)
     
-    stepArray = re.split("[;.!,?\n]", textObj.text)
+    stepArray = re.split("[;:.!,?\n]", textObj.text)
     stepArray = [x.strip() for x in stepArray]
     stepArray = list(filter(None, stepArray))
 
@@ -41,14 +41,13 @@ async def read_item(textObj: InputItem):
             # print(token.text, token.has_vector, token.vector_norm, token.is_oov)
             if (not token.has_vector):
                 continue
-            cosine = np.dot(avg_ingredient_vector,token.vector)/(np.linalg.norm(avg_ingredient_vector)*np.linalg.norm(token.vector))
-            print(token.text + " INGREDIENT: " + str(cosine))
-            if (cosine > 0.1):
+            cosineIngredient = np.dot(avg_ingredient_vector,token.vector)/(np.linalg.norm(avg_ingredient_vector)*np.linalg.norm(token.vector))
+            # print(token.text + " INGREDIENT: " + str(cosineIngredient)) ## DEBUG
+            cosineAction = np.dot(avg_action_vector,token.vector)/(np.linalg.norm(avg_action_vector)*np.linalg.norm(token.vector))
+            # print(token.text + " ACTION: " + str(cosineAction)) ## DEBUG
+            if (cosineIngredient > 0.4 and abs(cosineIngredient - cosineAction) > 0.05):
                 hasIngredient = True
-
-            cosine = np.dot(avg_action_vector,token.vector)/(np.linalg.norm(avg_action_vector)*np.linalg.norm(token.vector))
-            print(token.text + " ACTION: " + str(cosine))
-            if (cosine > 0.1):
+            if (cosineAction > 0.4 and abs(cosineIngredient - cosineAction) > 0.05):
                 hasAction = True
 
             if (hasIngredient and hasAction):

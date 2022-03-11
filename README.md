@@ -15,8 +15,8 @@ Welcome to Digest. This is an exploration of the Word2Vec algorithm. The goal of
 1. Git clone latest from repo
 2. Download recipeNLG dataset into `data/` folder and unzip into csv format
 3. Run `python3 process.py` to process the csv into a corpus text
-4. `make` word2vec algorithm and run the commands according to the instructions
-5. Use the generated .txt file to train the spaCy model with `python -m spacy init vectors en ./data/directions.txt ./model`
+4. `make` word2vec algorithm and run the commands according to the instructions `./word2vec -train ../data/directions.txt -output vectors.txt -cbow 0 -size 300 -window 8 -negative 25 -hs 0 -sample 1e-4 -threads 24 -binary 0 -iter 15`
+5. Use the generated .txt file to train the spaCy model with `python -m spacy init vectors en ./word2vec/vectors.txt ./model`
 6. Load the model into main.py and run GET token
 7. Deploy & Enjoy!
     - Run `zip -r Digest.zip . -x '.??*'` to zip the project
