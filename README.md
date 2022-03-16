@@ -11,6 +11,12 @@ Welcome to Digest. This is an exploration of the Word2Vec algorithm. The goal of
     - [Google](https://code.google.com/archive/p/word2vec/)
     - [Word2Vec](https://github.com/tmikolov/word2vec)
 
+## Local Development
+1. Clone the repo
+2. Create Virtual Environment
+3. Run `pip install -r requirements.txt`
+4. Run `uvicorn main:app --reload` 
+
 ## Usage
 1. Git clone latest from repo
 2. Download recipeNLG dataset into `data/` folder and unzip into csv format

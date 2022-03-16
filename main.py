@@ -16,7 +16,7 @@ async def health_check():
 
 @app.get("/version")
 async def version_check():
-    return "Version: 2022.3.10.17.38", 200
+    return "Version: 2022.3.16.15.16", 200
 
 @app.post("/")
 async def read_item(textObj: InputItem):
@@ -58,26 +58,37 @@ async def read_item(textObj: InputItem):
 
     return results, 200
 
-@app.post("/fastapi")
-async def fastapi_item(textObj: InputItem):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+@app.post("/gpt3")
+async def fastapi_item(textObj: InputItem, performance: int = 0):
+    engineMode = "word2vec"
+    max_tokens = 1000
+    if (performance == 2):
+        engineMode = "text-davinci-002"
+        max_tokens = 2000
+    elif (performance == 1):
+        engineMode = "text-ada-001"
+
     try:
+        openai.api_key = os.getenv("OPENAI_API_KEY")
         results = []
         response = openai.Completion.create(
-            engine="text-davinci-002",
+            engine=engineMode,
             prompt="Create a numbered list of recipe steps from this text: \n\n" + textObj.text,
             temperature=0.3,
-            max_tokens=2000,
+            max_tokens=max_tokens,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
         )
-        print(response)
+        # print(response)
         for res in response.choices[0].text.split("\n"):
-            results.append(res)
+            if (res.strip() != ""):
+                results.append(res)
         return results, 200
-    except:
-        return read_item(textObj)
+    except Exception as e:
+        print(e)
+        print("Falling Back to Word2Vec")
+        return await read_item(textObj)
 
 @app.get("/tokens")
 async def getTokens():
