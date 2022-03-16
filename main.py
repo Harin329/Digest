@@ -4,6 +4,8 @@ import spacy
 import numpy as np
 from fastapi import FastAPI
 from classes import InputItem
+import os
+import openai
 
 app = FastAPI()
 nlp = spacy.load("./model")
@@ -55,6 +57,27 @@ async def read_item(textObj: InputItem):
                 break
 
     return results, 200
+
+@app.post("/fastapi")
+async def fastapi_item(textObj: InputItem):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    try:
+        results = []
+        response = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt="Create a numbered list of recipe steps from this text: \n\n" + textObj.text,
+            temperature=0.3,
+            max_tokens=2000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        print(response)
+        for res in response.choices[0].text.split("\n"):
+            results.append(res)
+        return results, 200
+    except:
+        return read_item(textObj)
 
 @app.get("/tokens")
 async def getTokens():
